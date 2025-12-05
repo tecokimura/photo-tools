@@ -51,33 +51,42 @@ find "$directory" -type f -iname '*.jpg' | sort | while IFS= read -r file; do
     hour="${BASH_REMATCH[4]}"
     minute="${BASH_REMATCH[5]}"
     second="${BASH_REMATCH[6]}"
-    
-    # フォーマットされた日時を作成
-    datetime="${year}:${month}:${day} ${hour}:${minute}:${second}"
-    
-    echo "Processing file: $file"
-    echo "Updating Exif dates to: $datetime"
-
-    if [ "$dry_run" = true ]; then
-      # ドライラン時は更新せずにログのみ出力
-      echo "[Dry-run] Would update: $file -> $datetime"
-    else
-      # 実際にExifデータを更新
-      exiftool -overwrite_original \
-        "-DateTimeOriginal=$datetime" \
-        "-ModifyDate=$datetime" \
-        "-CreateDate=$datetime" \
-        "-FileModifyDate=$datetime" \
-        "-FileCreateDate=$datetime" \
-        "$file"
-    fi
-    
-    # 処理カウントを増加
-    ((processed_count++))
+  elif [[ "$name_without_extension" =~ ^([0-9]{2})([0-9]{2})([0-9]{2})_([0-9]{2})([0-9]{2})([0-9]{2})(.*)$ ]]; then
+    # 先頭 YYMMDD_HHMMSS を日時として扱い、以降の文字列は無視する
+    year="20${BASH_REMATCH[1]}"
+    month="${BASH_REMATCH[2]}"
+    day="${BASH_REMATCH[3]}"
+    hour="${BASH_REMATCH[4]}"
+    minute="${BASH_REMATCH[5]}"
+    second="${BASH_REMATCH[6]}"
   else
     echo "Skipping file: $file (Invalid filename format)"
     ((skipped_count++))
+    continue
   fi
+
+  # フォーマットされた日時を作成
+  datetime="${year}:${month}:${day} ${hour}:${minute}:${second}"
+  
+  echo "Processing file: $file"
+  echo "Updating Exif dates to: $datetime"
+
+  if [ "$dry_run" = true ]; then
+    # ドライラン時は更新せずにログのみ出力
+    echo "[Dry-run] Would update: $file -> $datetime"
+  else
+    # 実際にExifデータを更新
+    exiftool -overwrite_original \
+      "-DateTimeOriginal=$datetime" \
+      "-ModifyDate=$datetime" \
+      "-CreateDate=$datetime" \
+      "-FileModifyDate=$datetime" \
+      "-FileCreateDate=$datetime" \
+      "$file"
+  fi
+  
+  # 処理カウントを増加
+  ((processed_count++))
 done
 
 # 処理結果を出力
