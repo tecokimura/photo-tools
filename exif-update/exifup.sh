@@ -35,8 +35,8 @@ fi
 processed_count=0
 skipped_count=0
 
-# jpgファイルを処理
-find "$directory" -type f -iname '*.jpg' | sort | while IFS= read -r file; do
+# jpgファイルを処理（サブシェルを避けてカウンタを正しく更新するためプロセス置換を使用）
+while IFS= read -r file; do
   # ファイル名のみを取得
   filename=$(basename "$file")
   
@@ -87,7 +87,7 @@ find "$directory" -type f -iname '*.jpg' | sort | while IFS= read -r file; do
   
   # 処理カウントを増加
   ((processed_count++))
-done
+done < <(find "$directory" -type f -iname '*.jpg' | sort)
 
 # 処理結果を出力
 echo "Processing completed."
