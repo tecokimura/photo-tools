@@ -6,7 +6,7 @@
 - [exif-rename](./exif-rename/README.md): EXIF日時ベースで `jpg/JPG` を `YYMMDD_HHMMSS` 形式にリネーム
 - [exif-update](./exif-update/README.md): ファイル名の日時をもとに EXIF 日付を更新
 - [lens-log](./lens-log/README.md): EXIF情報を TSV/CSV で一覧出力
-- [lightroom-rename](./lightroom-rename/lightrename.sh): Lightroom書き出し後の重複名調整用スクリプト
+- [lightroom-duplicate-fix](./lightroom-duplicate-fix/README.md): Lightroom由来の重複名調整用スクリプト
 
 ## exif-rename のクイックガイド
 詳細は [exif-rename README](./exif-rename/README.md) を参照。
