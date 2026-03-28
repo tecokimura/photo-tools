@@ -3,7 +3,7 @@
 指定ディレクトリ直下の `jpg` / `JPG` を、EXIF の撮影日時を使って `YYMMDD_HHMMSS` 形式にリネームする Bash スクリプトです。
 
 ## 必要環境
-- bash 4 以降
+- bash 3.2 以降
 - [exiftool](https://exiftool.org/)
 
 ## 使い方

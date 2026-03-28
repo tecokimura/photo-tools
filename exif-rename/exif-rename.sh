@@ -82,8 +82,8 @@ if [[ ${#files[@]} -eq 0 ]]; then
   exit 0
 fi
 
-declare -A existing_names=()
-declare -A planned_names=()
+existing_names=()
+planned_names=()
 
 total_count=${#files[@]}
 rename_count=0
@@ -93,9 +93,21 @@ unchanged_count=0
 sources=()
 targets=()
 
+name_in_list() {
+  local needle="$1"
+  shift
+  local item
+  for item in "$@"; do
+    if [[ "$item" == "$needle" ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
 for file in "${files[@]}"; do
   src_name="$(basename "$file")"
-  existing_names["$src_name"]=1
+  existing_names+=("$src_name")
 done
 
 for file in "${files[@]}"; do
@@ -124,12 +136,12 @@ for file in "${files[@]}"; do
 
   while :; do
     in_existing=false
-    if [[ -n "${existing_names[$candidate]+x}" && "$candidate" != "$src_name" ]]; then
+    if [[ "$candidate" != "$src_name" ]] && name_in_list "$candidate" "${existing_names[@]}"; then
       in_existing=true
     fi
 
     in_planned=false
-    if [[ -n "${planned_names[$candidate]+x}" ]]; then
+    if name_in_list "$candidate" "${planned_names[@]}"; then
       in_planned=true
     fi
 
@@ -144,13 +156,13 @@ for file in "${files[@]}"; do
   if [[ "$candidate" == "$src_name" ]]; then
     printf 'Keep: %s (already matches %s)\n' "$src_name" "$source_tag"
     ((unchanged_count+=1))
-    planned_names["$candidate"]=1
+    planned_names+=("$candidate")
     continue
   fi
 
   sources+=("$file")
   targets+=("$(dirname "$file")/$candidate")
-  planned_names["$candidate"]=1
+  planned_names+=("$candidate")
   ((rename_count+=1))
 
 done
