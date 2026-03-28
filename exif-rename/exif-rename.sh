@@ -136,12 +136,12 @@ for file in "${files[@]}"; do
 
   while :; do
     in_existing=false
-    if [[ "$candidate" != "$src_name" ]] && name_in_list "$candidate" "${existing_names[@]}"; then
+    if [[ "$candidate" != "$src_name" ]] && name_in_list "$candidate" "${existing_names[@]-}"; then
       in_existing=true
     fi
 
     in_planned=false
-    if name_in_list "$candidate" "${planned_names[@]}"; then
+    if name_in_list "$candidate" "${planned_names[@]-}"; then
       in_planned=true
     fi
 
